@@ -249,7 +249,7 @@ function riwayat() {
       const tanggalMatch = str.value.match(/\[([^\]]+)\]/);
       const jamMatch = str.value.match(/\{([^}]+)\}/);
       const namaMatch = str.value.match(/#([^#]+)#/);
-      const produkMatch = str.value.match(/\$\{([^}]+)\}/); // ambil isi ${...}
+      const produkMatch = str.value.match(/\$\{([^}]+)\}/);
 
       const tanggalAsli = tanggalMatch ? tanggalMatch[1] : null;
 
@@ -259,11 +259,16 @@ function riwayat() {
         tanggalObj = new Date(parts[2], parts[1] - 1, parts[0]);
       }
 
-      // generate list produk
+      let jamMenit = null;
+      if (jamMatch && jamMatch[1]) {
+        const [jam, menit] = jamMatch[1].split('.').map(Number);
+        jamMenit = jam * 60 + menit;
+      }
+
       let produkList = [];
       if (produkMatch && produkMatch[1]) {
         produkList = produkMatch[1]
-          .split(",") // pisah per koma
+          .split(",")
           .map(item => {
             const [berat, qty] = item.split("<");
             return `${berat.replace(/gr/i, " gram")} x${qty}`;
@@ -274,36 +279,41 @@ function riwayat() {
         tanggalAsli,
         tanggalTampil: ubahFormatTanggal(tanggalAsli),
         jam: jamMatch ? jamMatch[1] : null,
+        jamMenit,
         nama: namaMatch ? namaMatch[1] : null,
         tanggalObj,
         produkList
       };
     });
 
-    // urutkan dari tanggal terbaru
-    data.sort((a, b) => b.tanggalObj - a.tanggalObj);
+    data.sort((a, b) => {
+      if (b.tanggalObj - a.tanggalObj === 0) {
+        return b.jamMenit - a.jamMenit;
+      }
+      return b.tanggalObj - a.tanggalObj;
+    });
 
-    // render
     listRiwayat.innerHTML = data
-      .map(
+    .map(
         d => `
-      <div class="log">
-        <div class="icon">
-          <img src="https://i.ibb.co.com/VYkQHwgJ/historys.webp" alt="" />
+        <div class="log ${d.nama && d.nama.toLowerCase().includes("free") ? "free-sample" : ""}">
+            <div class="icon">
+            <img src="${d.nama && d.nama.toLowerCase().includes("free") ? "https://i.ibb.co.com/V0DdVJQK/affiliate.webp" : "https://i.ibb.co.com/VYkQHwgJ/historys.webp"}" alt="" />
+            </div>
+            <div class="isi">
+            <div class="header-info">
+                <p class="nama">${d.nama || ''}</p>
+                <p class="tanggal">${d.tanggalTampil || ''}, ${d.jam || ''}</p>
+            </div>
+            <div class="produk">
+                ${d.produkList.map(p => `<p>${p}</p>`).join('')}
+            </div>
+            </div>
         </div>
-        <div class="isi">
-          <div class="header-info">
-            <p class="nama">${d.nama || ''}</p>
-            <p class="tanggal">${d.tanggalTampil || ''}, ${d.jam || ''}</p>
-          </div>
-          <div class="produk">
-            ${d.produkList.map(p => `<p>${p}</p>`).join('')}
-          </div>
-        </div>
-      </div>
-    `
-      )
-      .join('');
+        `
+    )
+    .join('');
+
   }
 
   function checkUpdate() {
@@ -316,4 +326,5 @@ function riwayat() {
 
   setInterval(checkUpdate, 100);
 }
+
 
