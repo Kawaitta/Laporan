@@ -11,7 +11,7 @@ stock = new AmbilData("1LDkX8BnwwtiqvRu3eN8Tgy6NKa3UWm97FNORewtToY8", "B"),
 iconNull = "https://i.ibb.co.com/GvNkcn1X/none.webp"
 
 
-let isActive = 2;
+let isActive = 3;
 
 // navbar function
 pageActive(isActive)
