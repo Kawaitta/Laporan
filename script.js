@@ -240,7 +240,7 @@ function ubahFormatTanggal(tanggalStr) {
 
 
 function riwayat() {
-    historyy.style.display = "block"
+  historyy.style.display = "block";
   let listRiwayat = document.querySelector(".list-riwayat"),
     previousDataJSON = null;
 
@@ -248,7 +248,8 @@ function riwayat() {
     const data = informasi.result.map(str => {
       const tanggalMatch = str.value.match(/\[([^\]]+)\]/);
       const jamMatch = str.value.match(/\{([^}]+)\}/);
-      const namaMatch = str.value.match(/@([^#]+)@/);
+      const namaMatch = str.value.match(/#([^#]+)#/);
+      const produkMatch = str.value.match(/\$\{([^}]+)\}/); // ambil isi ${...}
 
       const tanggalAsli = tanggalMatch ? tanggalMatch[1] : null;
 
@@ -258,24 +259,37 @@ function riwayat() {
         tanggalObj = new Date(parts[2], parts[1] - 1, parts[0]);
       }
 
+      // generate list produk
+      let produkList = [];
+      if (produkMatch && produkMatch[1]) {
+        produkList = produkMatch[1]
+          .split(",") // pisah per koma
+          .map(item => {
+            const [berat, qty] = item.split("<");
+            return `${berat.replace(/gr/i, " gram")} x${qty}`;
+          });
+      }
+
       return {
         tanggalAsli,
         tanggalTampil: ubahFormatTanggal(tanggalAsli),
         jam: jamMatch ? jamMatch[1] : null,
         nama: namaMatch ? namaMatch[1] : null,
-        tanggalObj
+        tanggalObj,
+        produkList
       };
     });
 
+    // urutkan dari tanggal terbaru
     data.sort((a, b) => b.tanggalObj - a.tanggalObj);
 
-    // Render ke DOM
+    // render
     listRiwayat.innerHTML = data
       .map(
         d => `
       <div class="log">
         <div class="icon">
-          <img src="${iconNull}" alt="" />
+          <img src="https://i.ibb.co.com/VYkQHwgJ/historys.webp" alt="" />
         </div>
         <div class="isi">
           <div class="header-info">
@@ -283,9 +297,7 @@ function riwayat() {
             <p class="tanggal">${d.tanggalTampil || ''}, ${d.jam || ''}</p>
           </div>
           <div class="produk">
-            <p>100 gram x2</p>
-            <p>50 gram x1</p>
-            <p>200 gram x3</p>
+            ${d.produkList.map(p => `<p>${p}</p>`).join('')}
           </div>
         </div>
       </div>
@@ -304,3 +316,4 @@ function riwayat() {
 
   setInterval(checkUpdate, 100);
 }
+
