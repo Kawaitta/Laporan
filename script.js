@@ -1,0 +1,306 @@
+const isiNav = document.querySelectorAll(".isi-nav"),
+LaporanProduk = document.querySelector(".LaporanProduk"),
+LaporanPenjualan = document.querySelector(".LaporanPenjualan"),
+HeaderLaporanPenjualan = document.querySelector(".header-laporanPenjualan"),
+listPenjualan = document.querySelector(".list-laporanPenjualan"),
+historyy = document.querySelector(".riwayat"),
+rekapan = document.querySelector(".rekapan")
+const variant = new AmbilData("1LDkX8BnwwtiqvRu3eN8Tgy6NKa3UWm97FNORewtToY8", "A"),
+informasi = new AmbilData("1LDkX8BnwwtiqvRu3eN8Tgy6NKa3UWm97FNORewtToY8", "D"),
+stock = new AmbilData("1LDkX8BnwwtiqvRu3eN8Tgy6NKa3UWm97FNORewtToY8", "B"),
+iconNull = "https://i.ibb.co.com/GvNkcn1X/none.webp"
+
+
+let isActive = 2;
+
+// navbar function
+pageActive(isActive)
+isiNav.forEach((el, i) => {
+    isiNav[isActive > isiNav.length ? isiNav.length : isActive].classList.add("active")
+    el.addEventListener("click", (e)=>{
+        isiNav.forEach(nav => nav.classList.remove("active"));
+        e.currentTarget.classList.add("active");
+        isActive = i;
+        pageActive(isActive)
+    })
+
+})
+
+function pageActive(isActive){
+    if(isActive == 0){
+        LaporanProduk.style.display = "none"
+        LaporanPenjualan.style.display = "none"
+        historyy.style.display = "none"
+        rekapan.style.display = "flex"
+        
+    } else if(isActive == 1){
+        rekapan.style.display = "none"
+        LaporanPenjualan.style.display = "none"
+        historyy.style.display = "none"
+        laporanProduk()
+    } else if(isActive == 2){
+        rekapan.style.display = "none"
+        LaporanProduk.style.display = "none"
+        historyy.style.display = "none"
+        laporanPenjualan()
+        
+    } else if(isActive == 3){
+        rekapan.style.display = "none"
+        LaporanProduk.style.display = "none"
+        LaporanPenjualan.style.display = "none"
+        riwayat()
+    }
+}
+
+// pages function
+function laporanProduk() {
+    var variants = [],
+        stocks = [];
+
+    LaporanProduk.style.display = "grid";
+    LaporanProduk.innerHTML = "";
+
+    setInterval(() => {
+        let isChanged = variants.length === 0
+
+        for (let i = 0; i < variant.result.length; i++) {
+            if (variant.result.length !== variants.length || stock.result.length !== stocks.length) {
+                variants = variant.result.map(v => v.value);
+                stocks = stock.result.map(s => s.value);
+                isChanged = true;
+                break;
+            }
+
+            if (variant.result[i].value !== variants[i] || stock.result[i].value !== stocks[i]) {
+                variants[i] = variant.result[i].value;
+                stocks[i] = stock.result[i].value;
+                isChanged = true;
+            }
+        }
+
+
+        if (isChanged) {
+            LaporanProduk.innerHTML = "";
+            for (let i = 0; i < variants.length; i++) {
+                if(variants[i] !== null){
+                    LaporanProduk.innerHTML += `
+                        <div class='list-laporanproduk'>
+                            <div class='variant-laporanproduk'>
+                                <p>Variant ${variants[i]}</p>
+                            </div>
+                            <div class='stok-laporanproduk'>
+                                <p>${!stocks[i] ? 0 : stocks[i]} PCS</p>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+        }
+    }, 100);
+}
+
+// Laporan Penjualan
+function laporanPenjualan() {
+    LaporanPenjualan.style.display = "block";
+    const ListToko = new AmbilData("1LDkX8BnwwtiqvRu3eN8Tgy6NKa3UWm97FNORewtToY8", "J"),
+          target = new AmbilData("1LDkX8BnwwtiqvRu3eN8Tgy6NKa3UWm97FNORewtToY8", "I");
+
+    let Informasi = [];
+    let lastTarget = null;
+    let lastSosmed = [];
+    let lastTotal = null;
+
+    setInterval(() => {
+        let currentTarget = Number(target.result[0].value) || 0;
+        let isChanged = false;
+
+        if (Informasi.length !== informasi.result.length) {
+            Informasi = informasi.result.map(info => info.value);
+            isChanged = true;
+        } else {
+            for (let i = 0; i < informasi.result.length; i++) {
+                if (informasi.result[i].value !== Informasi[i]) {
+                    Informasi[i] = informasi.result[i].value;
+                    isChanged = true;
+                }
+            }
+        }
+
+        let total = 0;
+        for (let i = 0; i < Informasi.length; i++) {
+            let tandaMatch = Informasi[i].match(/\((.*?)\)/);
+            let tanda = tandaMatch ? tandaMatch[1].trim() : null;
+
+            if (tanda === "-") {
+                const matches = [...Informasi[i].matchAll(/<\s*([0-9]+(?:\.[0-9]+)?)/g)];
+                let value = matches.reduce((sum, m) => sum + Number(m[1] || 0), 0);
+                total += value;
+            }
+        }
+
+        let newSosmed = ListToko.result.map(v => v.value);
+
+        let sosmedChanged = JSON.stringify(newSosmed) !== JSON.stringify(lastSosmed);
+
+        if (isChanged || currentTarget !== lastTarget || total !== lastTotal || sosmedChanged) {
+            lastTarget = currentTarget;
+            lastTotal = total;
+            lastSosmed = [...newSosmed];
+
+            HeaderLaporanPenjualan.innerHTML = `
+                <div class="informasi-laporanPenjualan">
+                    <div class="list-informasi-laporanPenjualan">
+                        <p>Target: ${currentTarget} pcs</p>
+                        <p>Total: ${total} pcs</p>
+                        <p class="kurang">Progress ${(currentTarget === 0 ? 0 : (total / currentTarget * 100)).toFixed(2)}%</p>
+                    </div>
+                </div>
+            `;
+
+            listPenjualan.innerHTML = "";
+
+            let validSosmed = newSosmed.filter(v => v && v.trim() !== "").map(s => s.trim());
+
+            let uniqueSosmed = [...new Set(validSosmed.map(s => {
+                let match = s.match(/^(.*?)\s*#/);
+                return match ? match[1].trim() : s;
+            }))];
+
+            let hasil = {};
+            uniqueSosmed.forEach(el => {
+                hasil[el] = 0;
+            });
+
+            let namaSosmedList = Informasi.map(item =>
+                [...item.matchAll(/#(.*?)#/g)].map(m => m[1].trim())
+            );
+
+            namaSosmedList.forEach((namaArray, idx) => {
+                if (!namaArray.length) return;
+                const matches = [...Informasi[idx].matchAll(/<\s*([0-9]+(?:\.[0-9]+)?)/g)];
+                let value = matches.reduce((sum, m) => sum + Number(m[1] || 0), 0);
+
+                namaArray.forEach(nama => {
+                    let key = uniqueSosmed.find(s => s.toLowerCase() === nama.toLowerCase());
+                    if (key) {
+                        hasil[key] += value;
+                    }
+                });
+            });
+
+            uniqueSosmed.forEach(sosName => {
+
+
+                let sosmedAsli = validSosmed.find(v => v.startsWith(sosName));
+                let iconMatch = sosmedAsli ? sosmedAsli.match(/#([^#]+)#/) : null;
+                let iconUrl = iconMatch ? iconMatch[1] : iconNull;
+                console.log(validSosmed)
+
+                let totalTerjual = hasil[sosName] || 0;
+
+
+
+                listPenjualan.innerHTML += `
+                    <div class="list-sosmed">
+                        <div class="profile">
+                            <div class="logo">
+                                <img src="${iconUrl}" alt="${sosName}">
+                            </div>
+                            <h1 class="nama-sosmed">${sosName}</h1>
+                        </div>
+                        <div class="jumlah">
+                            <p>Terjual ${totalTerjual} pcs</p>
+                        </div>
+                    </div>    
+                `;
+            });
+        }
+    }, 100);
+}
+
+// Fungsi Lanjutan
+function ubahFormatTanggal(tanggalStr) {
+  if (!tanggalStr) return "";
+
+  const bulanNama = [
+    "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+    "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+  ];
+
+  const parts = tanggalStr.split('/');
+  if(parts.length !== 3) return tanggalStr;
+
+  const hari = parseInt(parts[0], 10);
+  const bulanIndex = parseInt(parts[1], 10) - 1;
+  const tahun = parseInt(parts[2], 10);
+
+  return `${hari} ${bulanNama[bulanIndex]} ${tahun}`;
+}
+
+
+
+function riwayat() {
+    historyy.style.display = "block"
+  let listRiwayat = document.querySelector(".list-riwayat"),
+    previousDataJSON = null;
+
+  function update() {
+    const data = informasi.result.map(str => {
+      const tanggalMatch = str.value.match(/\[([^\]]+)\]/);
+      const jamMatch = str.value.match(/\{([^}]+)\}/);
+      const namaMatch = str.value.match(/@([^#]+)@/);
+
+      const tanggalAsli = tanggalMatch ? tanggalMatch[1] : null;
+
+      let tanggalObj = null;
+      if (tanggalAsli) {
+        const parts = tanggalAsli.split('/');
+        tanggalObj = new Date(parts[2], parts[1] - 1, parts[0]);
+      }
+
+      return {
+        tanggalAsli,
+        tanggalTampil: ubahFormatTanggal(tanggalAsli),
+        jam: jamMatch ? jamMatch[1] : null,
+        nama: namaMatch ? namaMatch[1] : null,
+        tanggalObj
+      };
+    });
+
+    data.sort((a, b) => b.tanggalObj - a.tanggalObj);
+
+    // Render ke DOM
+    listRiwayat.innerHTML = data
+      .map(
+        d => `
+      <div class="log">
+        <div class="icon">
+          <img src="${iconNull}" alt="" />
+        </div>
+        <div class="isi">
+          <div class="header-info">
+            <p class="nama">${d.nama || ''}</p>
+            <p class="tanggal">${d.tanggalTampil || ''}, ${d.jam || ''}</p>
+          </div>
+          <div class="produk">
+            <p>100 gram x2</p>
+            <p>50 gram x1</p>
+            <p>200 gram x3</p>
+          </div>
+        </div>
+      </div>
+    `
+      )
+      .join('');
+  }
+
+  function checkUpdate() {
+    const currentDataJSON = JSON.stringify(informasi.result);
+    if (currentDataJSON !== previousDataJSON) {
+      previousDataJSON = currentDataJSON;
+      update();
+    }
+  }
+
+  setInterval(checkUpdate, 100);
+}

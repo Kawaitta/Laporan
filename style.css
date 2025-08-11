@@ -1,0 +1,366 @@
+*{
+    margin: 0;
+    padding: 0;
+    font-family: "Roboto";
+}
+
+body{
+    background: #f3f4f6;
+    position: relative;
+    display: flex;
+    height: 99.8vh;
+    overflow: hidden;
+}
+
+#navbar{
+    width: 15vw;
+    height: 100%;
+    background: #ffff;
+    border: 1px solid gray;
+    border-radius: 0 5px 5px 0;
+    box-shadow: 7px -1px 7px -4px rgba(0,0,0,0.38);
+    -webkit-box-shadow: 7px -1px 7px -4px rgba(0,0,0,0.38);
+    -moz-box-shadow: 7px -1px 7px -4px rgba(0,0,0,0.38);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    animation: all 1s ease-in-out;
+    position: relative;
+}
+
+#navbar div{
+    width: 100%;
+    height: 100%;
+}
+
+#navbar #header, #navbar #foot{
+    height: 15vh;
+}
+
+#navbar #header{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#navbar #header h1{
+    font-size: 1.4vw;
+    color: #007f0d;
+}
+
+#navbar #list{
+    border-top: 1px solid rgb(218, 218, 218);
+    border-bottom: 1px solid rgb(218, 218, 218);
+    width: 100%;
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+#navbar #list div{
+    display: flex;
+    align-items: center;
+    height: 50px;
+}
+
+#navbar #list .isi-nav p{
+    margin-left: 15%;
+    font-size: .9vw;
+}
+
+#navbar #list :hover{
+    background: #f1f1f1;
+    cursor: pointer;
+    transform: scale(.98);
+    color: rgb(0, 181, 42);
+}
+
+#navbar #list .active{
+    font-weight: bold;
+    color: rgb(0, 104, 24);
+}
+
+#navbar #foot{
+    font-size: .8vw;
+    display: flex;
+    align-items: end;
+    justify-content: center;
+    padding: 25px;
+    height: 2%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Info */
+.info{
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    background: #e4e4e4;
+    overflow-y: auto;
+}
+
+/* Laporan Produk */
+.LaporanProduk{
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    scrollbar-width: thin;
+}
+
+.LaporanProduk .list-laporanproduk{
+    background-color: #ffffff;
+    height: 5rem;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    align-items: center;
+    justify-content: start;
+    font-weight: bold;
+    border-radius: 5px;
+    box-shadow: 0px 0px 8px -1px rgba(0,0,0,0.33);
+    -webkit-box-shadow: 0px 0px 8px -1px rgba(0,0,0,0.33);
+    -moz-box-shadow: 0px 0px 8px -1px rgba(0,0,0,0.33);
+}
+
+.LaporanProduk .list-laporanproduk .variant-laporanproduk{
+    margin-left: 30px;
+    font-size: 1.3vw;
+
+}
+
+.LaporanProduk .list-laporanproduk .stok-laporanproduk{
+    display: flex;
+    justify-content: end;
+    margin-right: 30px;
+}
+
+.LaporanProduk .list-laporanproduk .stok-laporanproduk p{
+    background: rgb(0, 136, 32);
+    padding: 10px;
+    width: auto;
+    text-align: center;
+    border-radius: 5px;
+    color: white;
+    font-size: 1vw;
+}
+
+/* Laporan Penjualan */
+.informasi-laporanPenjualan{
+    margin-bottom: 25px;
+    margin-left: 10px;
+}
+
+.list-informasi-laporanPenjualan{
+    display: flex;
+    gap: 10px;
+}
+
+.list-informasi-laporanPenjualan p{
+    width: fit-content;
+    background: #ffffff;
+    padding: 10px;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+.list-informasi-laporanPenjualan .kurang{
+    background: linear-gradient(90deg, #ffd700, #ffb700, #e9d900);
+    background-size: 200% 200%;
+    animation: gradientMove 4s ease infinite;
+    padding: 10px;
+    border-radius: 20px;
+    font-weight: bold;
+    color: white;
+}
+
+
+.list-laporanPenjualan{
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+.list-laporanPenjualan .list-sosmed{
+    background-color: #ffffff;
+    aspect-ratio: 1/1;
+    display: grid;
+    grid-template-columns: repeat(1);
+    font-weight: bold;
+    border-radius: 5px;
+    box-shadow: 0px 0px 8px -1px rgba(0,0,0,0.33);
+    -webkit-box-shadow: 0px 0px 8px -1px rgba(0,0,0,0.33);
+    -moz-box-shadow: 0px 0px 8px -1px rgba(0,0,0,0.33);
+    padding: 10px;
+}
+
+.list-laporanPenjualan .list-sosmed .profile{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.list-laporanPenjualan .list-sosmed .nama-sosmed{
+    margin-top: 10px;
+    font-size: 2.5vw;
+}
+
+.list-laporanPenjualan .list-sosmed .profile .logo{
+    aspect-ratio: 1/1;
+    width: 25%;
+
+}
+
+.list-laporanPenjualan .list-sosmed .profile .logo img, svg{
+    width: 100%;
+}
+
+.list-laporanPenjualan .list-sosmed .jumlah{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgb(246, 246, 246);
+}
+
+.list-laporanPenjualan .list-sosmed .jumlah p {
+    background: linear-gradient(90deg, #00ff0d, #216f00);
+    background-size: 200% 200%;
+    animation: gradientMove 4s ease infinite;
+    padding: 15px;
+    color: white;
+    border-radius: 10px;
+}
+
+/* Animasi gradient */
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* history */
+.riwayat {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.list-riwayat {
+  width: 100%;
+  max-width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.list-riwayat .log {
+  display: flex;
+  gap: 16px;
+  padding: 16px 20px;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
+  align-items: center;
+  transition: background-color 0.2s ease;
+}
+
+.list-riwayat .log:hover {
+  background-color: #f9f9f9;
+}
+
+.list-riwayat .log .icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+  padding: 15px;
+}
+
+.list-riwayat .log .icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.list-riwayat .log .isi {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.list-riwayat .log .isi .header-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.list-riwayat .log .isi .header-info .nama {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #000000;
+  margin: 0;
+}
+
+.list-riwayat .log .isi .header-info .tanggal {
+  font-size: 0.85rem;
+  color: #888888;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.list-riwayat .log .isi .produk {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.list-riwayat .log .isi .produk p {
+  background: #e3f2fd;
+  color: #0d47a1;
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 0.875rem;
+  margin: 0;
+  white-space: nowrap;
+}
+
+section{
+    display: none;
+}
+
+@media (max-width: 1024px) {
+    
+    section{
+        display: flex;
+        width: 100%;
+        height: 100vh;
+        position: fixed;
+        z-index: 1;
+        align-items: center;
+        justify-content: center;
+        background: white;
+    }
+}
