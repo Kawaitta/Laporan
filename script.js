@@ -44,15 +44,16 @@ function pageActive(isActive){
     } else if(isActive == 2){
         rekapan.style.display = "none"
         LaporanProduk.style.display = "none"
-        LaporanPenjualan.style.display = "none"
-        restockProduk()
+        historyy.style.display = "none"
+        restock.style.display = "none"
+        laporanPenjualan()
         
     } else if(isActive == 3){
         rekapan.style.display = "none"
         LaporanProduk.style.display = "none"
         historyy.style.display = "none"
-        restock.style.display = "none"
-        laporanPenjualan()
+        LaporanPenjualan.style.display = "none"
+        restockProduk()
         
     } else if(isActive == 4){
         rekapan.style.display = "none"
@@ -416,28 +417,47 @@ function riwayat() {
       return b.tanggalObj - a.tanggalObj;
     });
 
-    listRiwayat.innerHTML = data
-    .map(
-        d => `
-        <div class="log ${d.nama && d.nama.toLowerCase().includes("affiliate") ? "affiliate-sample" : ""}">
-            <div class="icon">
-            <img src="${d.nama && d.nama.toLowerCase().includes("affiliate") ? "https://i.ibb.co.com/V0DdVJQK/affiliate.webp" : "https://i.ibb.co.com/VYkQHwgJ/historys.webp"}" alt="" />
-            </div>
-            <div class="isi">
-            <div class="header-info">
-                <p class="nama">${d.nama || ''}</p>
-                <p class="tanggal">${d.tanggalTampil || ''}, ${d.jam || ''}</p>
-            </div>
-            <div class="produk">
-                ${d.produkList.map(p => `<p>${p}</p>`).join('')}
-            </div>
-            </div>
-        </div>
-        `
-    )
-    .join('');
 
-  }
+    for (let i = 0; i < informasi.result.length; i++) {
+        let tandaMatch = informasi.result[i].value.match(/\((.*?)\)/);
+        let tanda = tandaMatch ? tandaMatch[1].trim() : null;
+
+        if (tanda !== "+") {
+            listRiwayat.innerHTML = data
+                .map(d => {
+                    let logClass = "";
+                    let iconUrl = "https://i.ibb.co.com/VYkQHwgJ/historys.webp"; // default icon
+        
+                    if (d.nama && d.nama.toLowerCase().includes("affiliate")) {
+                        logClass = "affiliate-sample";
+                        iconUrl = "https://i.ibb.co.com/V0DdVJQK/affiliate.webp";
+                    } else if (d.nama && d.nama.toLowerCase().includes("free") && !d.nama.toLowerCase().includes("affiliate")) {
+                        logClass = "free-sample";
+                        iconUrl = "https://i.ibb.co.com/V0DdVJQK/affiliate.webp";
+                    }
+        
+                    return `
+                        <div class="log ${logClass}">
+                            <div class="icon">
+                                <img src="${iconUrl}" alt="" />
+                            </div>
+                            <div class="isi">
+                                <div class="header-info">
+                                    <p class="nama">${d.nama || ''}</p>
+                                    <p class="tanggal">${d.tanggalTampil || ''}, ${d.jam || ''}</p>
+                                </div>
+                                <div class="produk">
+                                    ${d.produkList.map(p => `<p>${p}</p>`).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                })
+                .join('');     
+        }
+    }
+
+    }
 
   function checkUpdate() {
     const currentDataJSON = JSON.stringify(informasi.result);

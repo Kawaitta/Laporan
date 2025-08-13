@@ -283,14 +283,11 @@ body{
 
 .list-riwayat .affiliate-sample {
     background: linear-gradient(135deg, #f3f9ff, #ffffff);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
 }
 
-.list-riwayat .restock {
-    background: linear-gradient(135deg, #f3f9ff, #ffffff);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+.list-riwayat .free-sample {
+    background: linear-gradient(135deg, #fffff0, #ffffff);
 }
-
 
 .list-riwayat .log:hover {
   background-color: #f9f9f9;
@@ -360,6 +357,10 @@ body{
 }
 
 /* Restock */
+.restock{
+  margin-bottom: 10%;
+}
+
 #restock-container {
   display: flex;
   flex-direction: column;
