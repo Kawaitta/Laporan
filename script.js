@@ -4,14 +4,15 @@ LaporanPenjualan = document.querySelector(".LaporanPenjualan"),
 HeaderLaporanPenjualan = document.querySelector(".header-laporanPenjualan"),
 listPenjualan = document.querySelector(".list-laporanPenjualan"),
 historyy = document.querySelector(".riwayat"),
-rekapan = document.querySelector(".rekapan")
+rekapan = document.querySelector(".rekapan"),
+restock = document.querySelector(".restock")
 const variant = new AmbilData("1LDkX8BnwwtiqvRu3eN8Tgy6NKa3UWm97FNORewtToY8", "A"),
 informasi = new AmbilData("1LDkX8BnwwtiqvRu3eN8Tgy6NKa3UWm97FNORewtToY8", "D"),
 stock = new AmbilData("1LDkX8BnwwtiqvRu3eN8Tgy6NKa3UWm97FNORewtToY8", "B"),
 iconNull = "https://i.ibb.co.com/GvNkcn1X/none.webp"
 
 
-let isActive = 3;
+let isActive = 2;
 
 // navbar function
 pageActive(isActive)
@@ -41,10 +42,16 @@ function pageActive(isActive){
     } else if(isActive == 2){
         rekapan.style.display = "none"
         LaporanProduk.style.display = "none"
+        LaporanPenjualan.style.display = "none"
+        restockProduk()
+
+    } else if(isActive == 3){
+        rekapan.style.display = "none"
+        LaporanProduk.style.display = "none"
         historyy.style.display = "none"
         laporanPenjualan()
         
-    } else if(isActive == 3){
+    } else if(isActive == 4){
         rekapan.style.display = "none"
         LaporanProduk.style.display = "none"
         LaporanPenjualan.style.display = "none"
@@ -98,6 +105,117 @@ function laporanProduk() {
         }
     }, 100);
 }
+
+// Restock
+function restockProduk() {
+    let lastDataJSON = null;
+
+    setInterval(() => {
+        let result = [];
+
+        for (let i = 0; i < informasi.result.length; i++) {
+            let tandaMatch = informasi.result[i].value.match(/\((.*?)\)/);
+            let tanda = tandaMatch ? tandaMatch[1].trim() : null;
+
+            if (tanda === "+") {
+                result.push(informasi.result[i]);
+            }
+        }
+
+        result.sort((a, b) => {
+            let [ta, ja] = [
+                a.value.match(/\[([^\]]+)\]/)?.[1],
+                a.value.match(/\{([^}]+)\}/)?.[1]
+            ];
+            let [tb, jb] = [
+                b.value.match(/\[([^\]]+)\]/)?.[1],
+                b.value.match(/\{([^}]+)\}/)?.[1]
+            ];
+
+            let dateA = parseTanggalJam(ta, ja);
+            let dateB = parseTanggalJam(tb, jb);
+
+            return dateB - dateA;
+        });
+
+        let currentDataJSON = JSON.stringify(result.map(r => r.value));
+        if (currentDataJSON === lastDataJSON) {
+            return;
+        }
+        lastDataJSON = currentDataJSON;
+
+        let allVariants = [];
+        result.forEach(item => {
+            let varianPartMatch = item.value.match(/\$\{([^}]+)\}/);
+            if (varianPartMatch) {
+                let variants = varianPartMatch[1].split(",").map(v => v.split("<")[0].trim());
+                allVariants.push(variants);
+            }
+        });
+
+        let masterVariants = allVariants.sort((a, b) => b.length - a.length)[0] || [];
+
+        let html = "";
+        result.forEach(item => {
+            let tanggalMatch = item.value.match(/\[([^\]]+)\]/);
+            let tanggal = tanggalMatch ? tanggalMatch[1].trim() : "";
+
+            let varianObj = {};
+            let varianPartMatch = item.value.match(/\$\{([^}]+)\}/);
+            if (varianPartMatch) {
+                let pairs = varianPartMatch[1].split(",");
+                pairs.forEach(p => {
+                    let [nama, jumlah] = p.split("<").map(s => s.trim());
+                    varianObj[nama] = jumlah || "0";
+                });
+            }
+
+            html += `
+            <div id="restock-container">
+                <div class="restock-item">
+                    <div class="restock-header">
+                        <h3>${ubahFormatTanggal(tanggal)}</h3>
+                    </div>
+                    <div class="restock-variants">
+                        ${masterVariants.map(v => `
+                            <div class="variant">
+                                <span class="label">${v}</span>
+                                <span class="value">${varianObj[v] || "0"} pcs</span>
+                            </div>
+                        `).join("")}
+                    </div>
+                </div>
+            </div>
+            `;
+        });
+
+        restock.innerHTML = html;
+
+    }, 100);
+
+    function parseTanggalJam(tanggalStr, jamStr) {
+        if (!tanggalStr) return new Date(0);
+        let [d, m, y] = tanggalStr.split("/").map(n => parseInt(n, 10));
+        let [hh, mm] = jamStr ? [jamStr.slice(0, 2), jamStr.slice(2)] : [0, 0];
+        return new Date(y, m - 1, d, hh, mm);
+    }
+}
+
+
+
+// Contoh fungsi format tanggal
+function ubahFormatTanggal(tanggalStr) {
+    const bulanNama = [
+        "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+        "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+    ];
+    const parts = tanggalStr.split('/');
+    const hari = parseInt(parts[0], 10);
+    const bulanIndex = parseInt(parts[1], 10) - 1;
+    const tahun = parts[2];
+    return `${hari} ${bulanNama[bulanIndex]} ${tahun}`;
+}
+
 
 // Laporan Penjualan
 function laporanPenjualan() {
@@ -238,7 +356,7 @@ function ubahFormatTanggal(tanggalStr) {
 }
 
 
-
+// Riwayat
 function riwayat() {
   historyy.style.display = "block";
   let listRiwayat = document.querySelector(".list-riwayat"),
@@ -296,9 +414,9 @@ function riwayat() {
     listRiwayat.innerHTML = data
     .map(
         d => `
-        <div class="log ${d.nama && d.nama.toLowerCase().includes("free") ? "free-sample" : ""}">
+        <div class="log ${d.nama && d.nama.toLowerCase().includes("affiliate") ? "affiliate-sample" : ""}">
             <div class="icon">
-            <img src="${d.nama && d.nama.toLowerCase().includes("free") ? "https://i.ibb.co.com/V0DdVJQK/affiliate.webp" : "https://i.ibb.co.com/VYkQHwgJ/historys.webp"}" alt="" />
+            <img src="${d.nama && d.nama.toLowerCase().includes("affiliate") ? "https://i.ibb.co.com/V0DdVJQK/affiliate.webp" : "https://i.ibb.co.com/VYkQHwgJ/historys.webp"}" alt="" />
             </div>
             <div class="isi">
             <div class="header-info">

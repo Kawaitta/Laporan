@@ -280,7 +280,7 @@ body{
   transition: background-color 0.2s ease;
 }
 
-.list-riwayat .free-sample {
+.list-riwayat .affiliate-sample {
     background: linear-gradient(135deg, #f3f9ff, #ffffff);
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
 }
@@ -358,6 +358,70 @@ body{
   white-space: nowrap;
 }
 
+/* Restock */
+#restock-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  background: #f9f9f9;
+}
+
+.restock-item {
+  background: white;
+  border-radius: 12px;
+  padding: 16px 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid #eee;
+}
+
+.restock-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.restock-header h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+
+.restock-variants {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.restock-variants {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.variant {
+  background: #f4f4f4;
+  padding: 8px 12px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+.variant .label {
+  font-weight: 500;
+}
+.variant .value {
+  font-weight: 600;
+  color: #333;
+  margin-left: 10px;
+}
+
+
+
+
 section{
     display: none;
 }
@@ -375,3 +439,4 @@ section{
         background: white;
     }
 }
+
