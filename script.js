@@ -12,7 +12,7 @@ stock = new AmbilData("1LDkX8BnwwtiqvRu3eN8Tgy6NKa3UWm97FNORewtToY8", "B"),
 iconNull = "https://i.ibb.co.com/GvNkcn1X/none.webp"
 
 
-let isActive = 2;
+let isActive = 1;
 
 // navbar function
 pageActive(isActive)
@@ -32,29 +32,33 @@ function pageActive(isActive){
         LaporanProduk.style.display = "none"
         LaporanPenjualan.style.display = "none"
         historyy.style.display = "none"
+        restock.style.display = "none"
         rekapan.style.display = "flex"
         
     } else if(isActive == 1){
         rekapan.style.display = "none"
         LaporanPenjualan.style.display = "none"
         historyy.style.display = "none"
+        restock.style.display = "none"
         laporanProduk()
     } else if(isActive == 2){
         rekapan.style.display = "none"
         LaporanProduk.style.display = "none"
         LaporanPenjualan.style.display = "none"
         restockProduk()
-
+        
     } else if(isActive == 3){
         rekapan.style.display = "none"
         LaporanProduk.style.display = "none"
         historyy.style.display = "none"
+        restock.style.display = "none"
         laporanPenjualan()
         
     } else if(isActive == 4){
         rekapan.style.display = "none"
         LaporanProduk.style.display = "none"
         LaporanPenjualan.style.display = "none"
+        restock.style.display = "none"
         riwayat()
     }
 }
@@ -108,6 +112,7 @@ function laporanProduk() {
 
 // Restock
 function restockProduk() {
+    restock.style.display = "block"
     let lastDataJSON = null;
 
     setInterval(() => {
