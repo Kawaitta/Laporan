@@ -12,7 +12,7 @@ stock = new AmbilData("1LDkX8BnwwtiqvRu3eN8Tgy6NKa3UWm97FNORewtToY8", "B"),
 iconNull = "https://i.ibb.co.com/GvNkcn1X/none.webp"
 
 
-let isActive = 1;
+let isActive = 0;
 
 // navbar function
 pageActive(isActive)
@@ -366,30 +366,42 @@ function ubahFormatTanggal(tanggalStr) {
 function riwayat() {
   historyy.style.display = "block";
   let listRiwayat = document.querySelector(".list-riwayat"),
-    previousDataJSON = null;
+      previousDataJSON = null;
 
   function update() {
-    const data = informasi.result.map(str => {
-      const tanggalMatch = str.value.match(/\[([^\]]+)\]/);
-      const jamMatch = str.value.match(/\{([^}]+)\}/);
-      const namaMatch = str.value.match(/#([^#]+)#/);
-      const produkMatch = str.value.match(/\$\{([^}]+)\}/);
+    let parsedData = informasi.result.map(item => {
+      // Ambil tanda (+ / -)
+      let tandaMatch = item.value.match(/^\((.*?)\)/);
+      let tanda = tandaMatch ? tandaMatch[1].trim() : null;
 
-      const tanggalAsli = tanggalMatch ? tanggalMatch[1] : null;
+      // Ambil tanggal
+      let tanggalMatch = item.value.match(/\[(.*?)\]/);
+      let tanggalAsli = tanggalMatch ? tanggalMatch[1].trim() : '';
+      let tanggalTampil = ubahFormatTanggal(tanggalAsli);
 
+      // Buat objek Date
       let tanggalObj = null;
       if (tanggalAsli) {
         const parts = tanggalAsli.split('/');
         tanggalObj = new Date(parts[2], parts[1] - 1, parts[0]);
       }
 
+      // Ambil jam
+      let jamMatch = item.value.match(/\{(.*?)\}/);
+      let jam = jamMatch ? jamMatch[1].trim() : '';
       let jamMenit = null;
-      if (jamMatch && jamMatch[1]) {
-        const [jam, menit] = jamMatch[1].split('.').map(Number);
-        jamMenit = jam * 60 + menit;
+      if (jam) {
+        const [j, m] = jam.split('.').map(Number);
+        jamMenit = j * 60 + m;
       }
 
+      // Ambil nama
+      let namaMatch = item.value.match(/#(.*?)#/);
+      let nama = namaMatch ? namaMatch[1].trim() : '';
+
+      // Ambil produk
       let produkList = [];
+      let produkMatch = item.value.match(/\$\{(.*?)\}\$/);
       if (produkMatch && produkMatch[1]) {
         produkList = produkMatch[1]
           .split(",")
@@ -400,64 +412,60 @@ function riwayat() {
       }
 
       return {
-        tanggalAsli,
-        tanggalTampil: ubahFormatTanggal(tanggalAsli),
-        jam: jamMatch ? jamMatch[1] : null,
-        jamMenit,
-        nama: namaMatch ? namaMatch[1] : null,
+        tanda,
+        tanggalTampil,
         tanggalObj,
+        jam,
+        jamMenit,
+        nama,
         produkList
       };
     });
 
-    data.sort((a, b) => {
+    // Filter hanya tanda bukan "+"
+    let filteredData = parsedData.filter(d => d.tanda !== "+");
+
+    // Urutkan dari terbaru ke lama
+    filteredData.sort((a, b) => {
       if (b.tanggalObj - a.tanggalObj === 0) {
         return b.jamMenit - a.jamMenit;
       }
       return b.tanggalObj - a.tanggalObj;
     });
 
+    // Render HTML
+    listRiwayat.innerHTML = filteredData
+      .map(d => {
+        let logClass = "";
+        let iconUrl = "https://i.ibb.co.com/VYkQHwgJ/historys.webp"; // default
 
-    for (let i = 0; i < informasi.result.length; i++) {
-        let tandaMatch = informasi.result[i].value.match(/\((.*?)\)/);
-        let tanda = tandaMatch ? tandaMatch[1].trim() : null;
-
-        if (tanda !== "+") {
-            listRiwayat.innerHTML = data
-                .map(d => {
-                    let logClass = "";
-                    let iconUrl = "https://i.ibb.co.com/VYkQHwgJ/historys.webp"; // default icon
-        
-                    if (d.nama && d.nama.toLowerCase().includes("affiliate")) {
-                        logClass = "affiliate-sample";
-                        iconUrl = "https://i.ibb.co.com/V0DdVJQK/affiliate.webp";
-                    } else if (d.nama && d.nama.toLowerCase().includes("free") && !d.nama.toLowerCase().includes("affiliate")) {
-                        logClass = "free-sample";
-                        iconUrl = "https://i.ibb.co.com/V0DdVJQK/affiliate.webp";
-                    }
-        
-                    return `
-                        <div class="log ${logClass}">
-                            <div class="icon">
-                                <img src="${iconUrl}" alt="" />
-                            </div>
-                            <div class="isi">
-                                <div class="header-info">
-                                    <p class="nama">${d.nama || ''}</p>
-                                    <p class="tanggal">${d.tanggalTampil || ''}, ${d.jam || ''}</p>
-                                </div>
-                                <div class="produk">
-                                    ${d.produkList.map(p => `<p>${p}</p>`).join('')}
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                })
-                .join('');     
+        if (d.nama && d.nama.toLowerCase().includes("affiliate")) {
+          logClass = "affiliate-sample";
+          iconUrl = "https://i.ibb.co.com/V0DdVJQK/affiliate.webp";
+        } else if (d.nama && d.nama.toLowerCase().includes("free") && !d.nama.toLowerCase().includes("affiliate")) {
+          logClass = "free-sample";
+          iconUrl = "https://i.ibb.co.com/V0DdVJQK/affiliate.webp";
         }
-    }
 
-    }
+        return `
+          <div class="log ${logClass}">
+            <div class="icon">
+              <img src="${iconUrl}" alt="" />
+            </div>
+            <div class="isi">
+              <div class="header-info">
+                <p class="nama">${d.nama}</p>
+                <p class="tanggal">${d.tanggalTampil}, ${d.jam}</p>
+              </div>
+              <div class="produk">
+                ${d.produkList.map(p => `<p>${p}</p>`).join('')}
+              </div>
+            </div>
+          </div>
+        `;
+      })
+      .join('');
+  }
 
   function checkUpdate() {
     const currentDataJSON = JSON.stringify(informasi.result);

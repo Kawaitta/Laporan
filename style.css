@@ -35,6 +35,7 @@ body{
     height: 100%;
 }
 
+
 #navbar #header, #navbar #foot{
     height: 15vh;
 }
@@ -442,3 +443,69 @@ section{
     }
 }
 
+/* Tablet (<= 1024px) */
+
+/* Khusus Navbar */
+/* @media (max-width: 1024px) { */
+    /* #navbar {
+        position: fixed;
+        display: flex;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        height: 4rem;
+        flex-direction: column;
+        background: #fff;
+        border-bottom: 1px solid #ddd;
+        width: 100%;
+        box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+        border-radius: 0 0 10px 10px;
+        border: 0;
+    } */
+
+    /* Judul di kiri */
+    /* #navbar #header {
+        width: fit-content;
+    }
+    #navbar #header h1 {
+        font-size: 1.2rem;
+    } */
+
+    /* Sidebar menu default tertutup */
+    /* .list-copyright {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        max-width: 35%;
+        background: white;
+        transition: left 0.3s ease;
+        max-height: calc(100vh - 3.8rem);
+    } */
+
+    /* Kalau dibuka, geser masuk */
+    /* .list-copyright {
+        background: red;
+        width: 100%;
+    } */
+
+    /* Styling menu item */
+    /* #list .isi-nav {
+        border-bottom: 1px solid #eee;
+    }
+
+    #list .isi-nav p {
+      background: blue;
+    }
+
+} */
+
+
+
+/* @media (max-width: 1024px) {
+
+} */
+
+/* HP (<= 768px) */
+/* @media (max-width: 768px) {
+
+} */
